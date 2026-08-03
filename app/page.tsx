@@ -90,11 +90,11 @@ export default function Home() {
      // Prompt sent to AI model
      const prompt = `
 YOUR TASK:
-Generate 3 TikTok content ideas about basketball.
+Generate 3 TikTok content ideas about Gel nail polish
 
 
 REQUIREMENTS:
-- Target beginner basketball players
+- Target beginner Gel nail polish enthusiasts
 - Focus on relatable, real-life scenarios
 - Each idea must:
  - Start with a strong hook
