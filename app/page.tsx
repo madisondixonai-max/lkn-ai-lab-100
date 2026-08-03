@@ -49,7 +49,7 @@ export default function Home() {
   // "bg-black text-white"
   // "bg-zinc-900 text-white"
   // "bg-white text-black"
-  const BACKGROUND = "bg-purple-200 text-white";
+  const BACKGROUND = "bg-purple-200 text-purple-700";
 
   // 👉 Change input box styling (Tailwind classes)
   // Examples:
