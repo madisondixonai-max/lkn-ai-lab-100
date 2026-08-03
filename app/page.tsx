@@ -56,7 +56,7 @@ export default function Home() {
   // "bg-gray-900 border border-white/10 text-white"
   // "bg-gray-800 border border-white/20 text-white"
   // "bg-white border border-gray-300 text-black"
-  const INPUT_STYLE = "bg-gray-900 border border-white/10 text-white";
+  const INPUT_STYLE = "bg-purple-100 border border-purple-400 text-purple-900";
 
   // Backend API (do not change)
   const BASE_URL = "https://lkn-ai-backend.vercel.app";
