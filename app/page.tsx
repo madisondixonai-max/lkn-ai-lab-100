@@ -42,7 +42,7 @@ export default function Home() {
   // "bg-blue-500 text-white hover:bg-blue-600"
   // "bg-red-500 text-white hover:bg-red-600"
   // "bg-white text-blue-500 hover:bg-gray-100"
-  const PRIMARY_BUTTON = "bg-blue-600 text-white hover:opacity-90 transition";
+  const PRIMARY_BUTTON = "bg-gray-600 text-white hover:opacity-90 transition";
 
   // 👉 Change your background + text color
   // Examples:
