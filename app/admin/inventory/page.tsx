@@ -7,6 +7,7 @@ type Product = {
   id: string;
   name: string;
   shape: string;
+  description: string;
   price: number;
   stock: number;
   imageUrl: string;
@@ -15,11 +16,51 @@ type Product = {
 const SHAPES = ["Almond", "Square", "Coffin"];
 
 const MOCK_PRODUCTS: Product[] = [
-  { id: "1", name: "Classic Almond", shape: "Almond", price: 25, stock: 12, imageUrl: "" },
-  { id: "2", name: "Coffin Glitter", shape: "Coffin", price: 30, stock: 3, imageUrl: "" },
-  { id: "3", name: "Square French", shape: "Square", price: 22, stock: 8, imageUrl: "" },
-  { id: "4", name: "Almond Ombre", shape: "Almond", price: 28, stock: 0, imageUrl: "" },
-  { id: "5", name: "Coffin Chrome", shape: "Coffin", price: 32, stock: 5, imageUrl: "" },
+  {
+    id: "1",
+    name: "Classic Almond",
+    shape: "Almond",
+    description: "Soft nude pink with a glossy finish. Perfect for everyday wear.",
+    price: 25,
+    stock: 12,
+    imageUrl: "",
+  },
+  {
+    id: "2",
+    name: "Coffin Glitter",
+    shape: "Coffin",
+    description: "Silver glitter fade on a coffin shape. Great for nights out.",
+    price: 30,
+    stock: 3,
+    imageUrl: "",
+  },
+  {
+    id: "3",
+    name: "Square French",
+    shape: "Square",
+    description: "Clean white tips on a square shape. Timeless and classy.",
+    price: 22,
+    stock: 8,
+    imageUrl: "",
+  },
+  {
+    id: "4",
+    name: "Almond Ombre",
+    shape: "Almond",
+    description: "Purple-to-pink ombre on almond nails. Bold but still cute.",
+    price: 28,
+    stock: 0,
+    imageUrl: "",
+  },
+  {
+    id: "5",
+    name: "Coffin Chrome",
+    shape: "Coffin",
+    description: "Mirror chrome finish with a coffin shape. Stands out in photos.",
+    price: 32,
+    stock: 5,
+    imageUrl: "",
+  },
 ];
 
 const BACKGROUND = "bg-purple-200 text-purple-700";
@@ -38,13 +79,16 @@ function stockBadgeClass(stock: number) {
   return "bg-green-100 text-green-800 border-green-300";
 }
 
-function ProductThumbnail({ imageUrl, shape }: { imageUrl: string; shape: string }) {
+function ProductImage({ imageUrl, shape, large }: { imageUrl: string; shape: string; large?: boolean }) {
   const [failed, setFailed] = useState(false);
   const showPlaceholder = !imageUrl || failed;
+  const sizeClass = large ? "w-full h-40" : "w-12 h-12";
 
   if (showPlaceholder) {
     return (
-      <div className="w-12 h-12 rounded-lg bg-purple-200 border border-purple-300 flex items-center justify-center text-xs font-semibold text-purple-600">
+      <div
+        className={`${sizeClass} rounded-lg bg-purple-200 border border-purple-300 flex items-center justify-center text-2xl font-semibold text-purple-600`}
+      >
         {shape.slice(0, 1)}
       </div>
     );
@@ -54,7 +98,7 @@ function ProductThumbnail({ imageUrl, shape }: { imageUrl: string; shape: string
     <img
       src={imageUrl}
       alt={shape}
-      className="w-12 h-12 rounded-lg object-cover border border-purple-300"
+      className={`${sizeClass} rounded-lg object-cover border border-purple-300`}
       onError={() => setFailed(true)}
     />
   );
@@ -66,6 +110,7 @@ export default function InventoryPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [newShape, setNewShape] = useState(SHAPES[0]);
+  const [newDescription, setNewDescription] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newStock, setNewStock] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
@@ -91,7 +136,7 @@ export default function InventoryPage() {
     e.preventDefault();
     const price = parseFloat(newPrice);
     const stock = parseInt(newStock, 10);
-    if (!newName.trim() || isNaN(price) || price <= 0 || isNaN(stock) || stock < 0) return;
+    if (!newName.trim() || !newDescription.trim() || isNaN(price) || price <= 0 || isNaN(stock) || stock < 0) return;
 
     setProducts((prev) => [
       ...prev,
@@ -99,6 +144,7 @@ export default function InventoryPage() {
         id: crypto.randomUUID(),
         name: newName.trim(),
         shape: newShape,
+        description: newDescription.trim(),
         price,
         stock,
         imageUrl: newImageUrl.trim(),
@@ -106,6 +152,7 @@ export default function InventoryPage() {
     ]);
     setNewName("");
     setNewShape(SHAPES[0]);
+    setNewDescription("");
     setNewPrice("");
     setNewStock("");
     setNewImageUrl("");
@@ -119,7 +166,7 @@ export default function InventoryPage() {
 
   return (
     <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-3xl font-bold">Inventory</h1>
           <Link href="/" className="text-sm text-purple-600 hover:underline">
@@ -130,7 +177,7 @@ export default function InventoryPage() {
           Frontend only — changes reset on refresh.
         </p>
 
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
           <label className="flex items-center gap-2 text-sm">
             <span className="font-semibold">Filter by shape:</span>
             <select
@@ -163,6 +210,13 @@ export default function InventoryPage() {
               placeholder="Product name"
               className={`p-2 rounded-lg ${INPUT_STYLE}`}
             />
+            <textarea
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+              placeholder="Description (e.g. Soft pink gloss, perfect for everyday wear)"
+              rows={2}
+              className={`p-2 rounded-lg ${INPUT_STYLE}`}
+            />
             <select
               value={newShape}
               onChange={(e) => setNewShape(e.target.value)}
@@ -180,7 +234,7 @@ export default function InventoryPage() {
             />
             {newImageUrl && (
               <div className="flex items-center gap-3">
-                <ProductThumbnail imageUrl={newImageUrl} shape={newShape} />
+                <ProductImage imageUrl={newImageUrl} shape={newShape} />
                 <span className="text-xs text-purple-600">Image preview</span>
               </div>
             )}
@@ -212,78 +266,66 @@ export default function InventoryPage() {
           </form>
         )}
 
-        <div className="bg-purple-50 border border-purple-300 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-purple-200 text-left">
-                <th className="p-4 font-semibold">Image</th>
-                <th className="p-4 font-semibold">Product</th>
-                <th className="p-4 font-semibold hidden sm:table-cell">Shape</th>
-                <th className="p-4 font-semibold">Price</th>
-                <th className="p-4 font-semibold">Stock</th>
-                <th className="p-4 font-semibold hidden sm:table-cell">Status</th>
-                <th className="p-4 w-10" />
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProducts.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="p-8 text-center text-purple-500">
-                    {products.length === 0
-                      ? "No products yet. Add one above."
-                      : "No products match this filter."}
-                  </td>
-                </tr>
-              ) : (
-                filteredProducts.map((product) => (
-                  <tr key={product.id} className="border-b border-purple-100 last:border-none">
-                    <td className="p-4">
-                      <ProductThumbnail imageUrl={product.imageUrl} shape={product.shape} />
-                    </td>
-                    <td className="p-4 font-medium">{product.name}</td>
-                    <td className="p-4 hidden sm:table-cell">{product.shape}</td>
-                    <td className="p-4">${product.price.toFixed(2)}</td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => updateStock(product.id, -1)}
-                          className="w-7 h-7 rounded bg-purple-200 hover:bg-purple-300 font-bold"
-                          aria-label="Decrease stock"
-                        >
-                          −
-                        </button>
-                        <span className="w-8 text-center">{product.stock}</span>
-                        <button
-                          onClick={() => updateStock(product.id, 1)}
-                          className="w-7 h-7 rounded bg-purple-200 hover:bg-purple-300 font-bold"
-                          aria-label="Increase stock"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </td>
-                    <td className="p-4 hidden sm:table-cell">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full border ${stockBadgeClass(product.stock)}`}
-                      >
-                        {stockLabel(product.stock)}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <button
-                        onClick={() => removeProduct(product.id)}
-                        className="text-red-500 hover:text-red-700 text-xs"
-                        aria-label="Remove product"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        {filteredProducts.length === 0 ? (
+          <p className="text-center text-purple-500 py-12">
+            {products.length === 0
+              ? "No products yet. Add one above."
+              : "No products match this filter."}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredProducts.map((product) => (
+              <div
+                key={product.id}
+                className="bg-purple-50 border border-purple-300 rounded-xl p-4 flex flex-col"
+              >
+                <ProductImage imageUrl={product.imageUrl} shape={product.shape} large />
+                <div className="mt-3 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <h2 className="font-bold text-lg">{product.name}</h2>
+                    <span className="text-xl font-bold text-purple-800 shrink-0">
+                      ${product.price.toFixed(2)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-purple-500 mt-1">{product.shape}</p>
+                  <p className="text-sm text-purple-700/90 mt-2 leading-relaxed">
+                    {product.description}
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between">
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full border ${stockBadgeClass(product.stock)}`}
+                  >
+                    {stockLabel(product.stock)}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateStock(product.id, -1)}
+                      className="w-7 h-7 rounded bg-purple-200 hover:bg-purple-300 font-bold"
+                      aria-label="Decrease stock"
+                    >
+                      −
+                    </button>
+                    <span className="w-8 text-center text-sm">{product.stock}</span>
+                    <button
+                      onClick={() => updateStock(product.id, 1)}
+                      className="w-7 h-7 rounded bg-purple-200 hover:bg-purple-300 font-bold"
+                      aria-label="Increase stock"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <button
+                  onClick={() => removeProduct(product.id)}
+                  className="mt-3 text-red-500 hover:text-red-700 text-xs text-left"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
