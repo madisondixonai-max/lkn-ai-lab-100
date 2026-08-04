@@ -10,9 +10,11 @@ import {
   getCart,
   getPickupDates,
   PICKUP_TIMES,
+  PAYMENT_METHODS,
   removeCartItem,
   SHIPPING_FEE,
   type CartItem,
+  type PaymentMethodId,
 } from "@/lib/cart";
 import {
   BACKGROUND,
@@ -22,7 +24,7 @@ import {
 } from "@/lib/theme";
 
 type DeliveryType = "local" | "shipping" | null;
-type Step = 1 | 2 | 3 | 4 | 5;
+type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -35,6 +37,10 @@ export default function CartPage() {
   const [shippingAddress, setShippingAddress] = useState("");
   const [shippingCity, setShippingCity] = useState("");
   const [shippingZip, setShippingZip] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId | null>(null);
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
   const [placed, setPlaced] = useState(false);
 
   useEffect(() => {
@@ -60,10 +66,22 @@ export default function CartPage() {
         ? shippingAddress.trim() && shippingCity.trim() && shippingZip.trim()
         : false;
 
+  const availablePaymentMethods = PAYMENT_METHODS.filter(
+    (m) => m.id !== "pickup" || deliveryType === "local"
+  );
+
+  const paymentLabel = PAYMENT_METHODS.find((m) => m.id === paymentMethod)?.label;
+
+  const canContinueStep5 =
+    paymentMethod !== null &&
+    (paymentMethod !== "pickup" || deliveryType === "local") &&
+    (paymentMethod !== "card" ||
+      (cardNumber.replace(/\s/g, "").length >= 15 &&
+        cardExpiry.trim().length >= 4 &&
+        cardCvc.trim().length >= 3));
+
   const goNext = () => {
-    if (step === 3 && deliveryType === "local") setStep(4);
-    else if (step === 3 && deliveryType === "shipping") setStep(4);
-    else if (step < 5) setStep((s) => (s + 1) as Step);
+    if (step < 6) setStep((s) => (s + 1) as Step);
   };
 
   const goBack = () => {
@@ -116,7 +134,7 @@ export default function CartPage() {
         <BrandHeader cartCount={cart.length} showCart />
 
         <h1 className="text-3xl font-bold mb-2">Cart</h1>
-        <p className="text-sm text-purple-600 mb-6">Step {step} of 5</p>
+        <p className="text-sm text-purple-600 mb-6">Step {step} of 6</p>
 
         {/* Step 1: Cart review */}
         {step === 1 && (
@@ -192,7 +210,9 @@ export default function CartPage() {
             <h2 className="font-semibold">How do you want your nails?</h2>
             <button
               type="button"
-              onClick={() => setDeliveryType("local")}
+              onClick={() => {
+                setDeliveryType("local");
+              }}
               className={`w-full p-4 rounded-lg border text-left transition ${
                 deliveryType === "local"
                   ? "bg-purple-600 text-white border-purple-600"
@@ -204,7 +224,10 @@ export default function CartPage() {
             </button>
             <button
               type="button"
-              onClick={() => setDeliveryType("shipping")}
+              onClick={() => {
+                setDeliveryType("shipping");
+                if (paymentMethod === "pickup") setPaymentMethod(null);
+              }}
               className={`w-full p-4 rounded-lg border text-left transition ${
                 deliveryType === "shipping"
                   ? "bg-purple-600 text-white border-purple-600"
@@ -328,8 +351,84 @@ export default function CartPage() {
           </div>
         )}
 
-        {/* Step 5: Summary */}
+        {/* Step 5: Payment */}
         {step === 5 && (
+          <div className={`${CARD_STYLE} p-4 space-y-4`}>
+            <h2 className="font-semibold">Payment method</h2>
+            <p className="text-sm text-purple-600">Total due: ${total.toFixed(2)}</p>
+            {availablePaymentMethods.map((method) => (
+              <button
+                key={method.id}
+                type="button"
+                onClick={() => setPaymentMethod(method.id)}
+                className={`w-full p-4 rounded-lg border text-left transition ${
+                  paymentMethod === method.id
+                    ? "bg-purple-600 text-white border-purple-600"
+                    : "bg-purple-100 border-purple-400 text-purple-900 hover:bg-purple-200"
+                }`}
+              >
+                <p className="font-semibold">{method.label}</p>
+                {method.id === "venmo" && (
+                  <p className="text-sm opacity-80 mt-1">Pay via Venmo after order confirmation</p>
+                )}
+                {method.id === "cashapp" && (
+                  <p className="text-sm opacity-80 mt-1">Pay via Cash App after order confirmation</p>
+                )}
+                {method.id === "apple" && (
+                  <p className="text-sm opacity-80 mt-1">Fast checkout with Apple Pay</p>
+                )}
+                {method.id === "pickup" && (
+                  <p className="text-sm opacity-80 mt-1">Pay when you pick up your nails</p>
+                )}
+              </button>
+            ))}
+            {paymentMethod === "card" && (
+              <div className="space-y-3 pt-2">
+                <input
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(e.target.value)}
+                  placeholder="Card number"
+                  className={`w-full p-3 rounded-lg ${INPUT_STYLE}`}
+                />
+                <div className="flex gap-3">
+                  <input
+                    value={cardExpiry}
+                    onChange={(e) => setCardExpiry(e.target.value)}
+                    placeholder="MM/YY"
+                    className={`p-3 rounded-lg flex-1 ${INPUT_STYLE}`}
+                  />
+                  <input
+                    value={cardCvc}
+                    onChange={(e) => setCardCvc(e.target.value)}
+                    placeholder="CVC"
+                    className={`p-3 rounded-lg flex-1 ${INPUT_STYLE}`}
+                  />
+                </div>
+              </div>
+            )}
+            {(paymentMethod === "venmo" || paymentMethod === "cashapp" || paymentMethod === "apple") && (
+              <p className="text-xs text-purple-500">
+                Madison will send payment details to {email || "your email"} after you place the order.
+              </p>
+            )}
+            <div className="flex gap-2">
+              <button type="button" onClick={goBack} className="flex-1 p-3 rounded-lg border border-purple-400 text-purple-700">
+                Back
+              </button>
+              <button
+                type="button"
+                disabled={!canContinueStep5}
+                onClick={goNext}
+                className={`flex-1 p-3 rounded-lg font-semibold ${PRIMARY_BUTTON} disabled:opacity-40`}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 6: Summary */}
+        {step === 6 && (
           <div className={`${CARD_STYLE} p-4 space-y-4`}>
             <h2 className="font-semibold">Order summary</h2>
             {cart.map((item) => (
@@ -353,6 +452,9 @@ export default function CartPage() {
                 <p className="text-sm">Shipping: ${SHIPPING_FEE.toFixed(2)}</p>
               </>
             )}
+            <p className="text-sm">
+              <span className="font-medium">Payment:</span> {paymentLabel}
+            </p>
             <p className="font-bold text-lg text-right">Total: ${total.toFixed(2)}</p>
             <div className="flex gap-2">
               <button type="button" onClick={goBack} className="flex-1 p-3 rounded-lg border border-purple-400 text-purple-700">

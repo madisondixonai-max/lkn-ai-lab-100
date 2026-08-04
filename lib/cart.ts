@@ -58,6 +58,16 @@ export function getPickupDates(): Date[] {
 
 export const PICKUP_TIMES = ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM"];
 
+export const PAYMENT_METHODS = [
+  { id: "card", label: "Credit / Debit Card" },
+  { id: "apple", label: "Apple Pay" },
+  { id: "venmo", label: "Venmo" },
+  { id: "cashapp", label: "Cash App" },
+  { id: "pickup", label: "Pay at pickup (local only)" },
+] as const;
+
+export type PaymentMethodId = (typeof PAYMENT_METHODS)[number]["id"];
+
 export function formatPickupDate(date: Date) {
   return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
