@@ -9,14 +9,14 @@ type BrandHeaderProps = {
 
 export default function BrandHeader({ cartCount = 0, showCart = false }: BrandHeaderProps) {
   return (
-    <header className="relative w-full mb-6">
-      <Link href="/" className="block w-full">
+    <header className="relative w-screen max-w-[100vw] left-1/2 -translate-x-1/2 mb-8 bg-purple-50/90 border-y border-purple-300 py-4 px-4 shadow-sm">
+      <Link href="/" className="block w-full max-w-5xl mx-auto">
         <Image
           src="/logo.png"
           alt={BRAND_NAME}
-          width={900}
-          height={140}
-          className="w-full h-auto max-h-[100px] object-contain object-center"
+          width={1200}
+          height={160}
+          className="w-full h-[120px] object-contain object-center"
           priority
         />
       </Link>
@@ -24,7 +24,7 @@ export default function BrandHeader({ cartCount = 0, showCart = false }: BrandHe
         <Link
           href="/cart"
           aria-label={`Cart with ${cartCount} items`}
-          className="absolute top-2 right-0 flex items-center justify-center w-11 h-10 bg-purple-100 border-2 border-purple-400 rounded-xl hover:bg-purple-200 transition shadow-sm"
+          className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 flex items-center justify-center w-11 h-10 bg-purple-100 border-2 border-purple-400 rounded-xl hover:bg-purple-200 transition shadow-sm"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
