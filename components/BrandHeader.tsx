@@ -15,9 +15,12 @@ export default function BrandHeader({ cartCount = 0, showCart = false }: BrandHe
         <span className="text-xl font-bold text-purple-800">{BRAND_NAME}</span>
       </Link>
       {showCart && (
-        <span className="text-sm font-semibold text-purple-700 bg-purple-100 border border-purple-400 px-3 py-1 rounded-full">
+        <Link
+          href="/cart"
+          className="text-sm font-semibold text-purple-700 bg-purple-100 border border-purple-400 px-3 py-1 rounded-full hover:bg-purple-200 transition"
+        >
           Cart ({cartCount})
-        </span>
+        </Link>
       )}
     </header>
   );

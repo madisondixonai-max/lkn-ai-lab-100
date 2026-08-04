@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BrandHeader from "@/components/BrandHeader";
 import ProductImage from "@/components/ProductImage";
+import { addCartItem, getCart } from "@/lib/cart";
 import {
   MOCK_PRODUCTS,
   SHAPES,
@@ -19,20 +20,16 @@ import {
   PRIMARY_BUTTON,
 } from "@/lib/theme";
 
-type CartItem = {
-  productId: string;
-  name: string;
-  shape: string;
-  size: string;
-  price: number;
-};
-
 export default function ShopPage() {
   const [shapeFilter, setShapeFilter] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartCount, setCartCount] = useState(0);
   const [addedMessage, setAddedMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCartCount(getCart().length);
+  }, []);
 
   const filteredProducts =
     shapeFilter === "All"
@@ -51,16 +48,14 @@ export default function ShopPage() {
 
   const addToCart = () => {
     if (!selectedProduct || !selectedSize || selectedProduct.stock === 0) return;
-    setCart((prev) => [
-      ...prev,
-      {
-        productId: selectedProduct.id,
-        name: selectedProduct.name,
-        shape: selectedProduct.shape,
-        size: selectedSize,
-        price: selectedProduct.price,
-      },
-    ]);
+    addCartItem({
+      productId: selectedProduct.id,
+      name: selectedProduct.name,
+      shape: selectedProduct.shape,
+      size: selectedSize,
+      price: selectedProduct.price,
+    });
+    setCartCount(getCart().length);
     setAddedMessage(`${selectedProduct.name} (Size ${selectedSize}) added to cart!`);
     closeProduct();
     setTimeout(() => setAddedMessage(null), 3000);
@@ -69,7 +64,7 @@ export default function ShopPage() {
   return (
     <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
       <div className="max-w-5xl mx-auto">
-        <BrandHeader cartCount={cart.length} showCart />
+        <BrandHeader cartCount={cartCount} showCart />
 
         <p className="text-purple-600/80 text-sm mb-2">{BRAND_TAGLINE}</p>
         <h1 className="text-3xl font-bold mb-6">Shop</h1>
