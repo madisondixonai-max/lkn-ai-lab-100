@@ -14,7 +14,6 @@ type Product = {
 };
 
 const SHAPES = ["Almond", "Square", "Coffin"];
-const SIZES = ["XS", "S", "M", "L", "XL"];
 
 const MOCK_PRODUCTS: Product[] = [
   {
@@ -235,8 +234,6 @@ export default function InventoryPage() {
   const [newPrice, setNewPrice] = useState("");
   const [newStock, setNewStock] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editName, setEditName] = useState("");
   const [editShape, setEditShape] = useState(SHAPES[0]);
@@ -260,7 +257,6 @@ export default function InventoryPage() {
 
   const removeProduct = (id: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    if (selectedProduct?.id === id) closeProduct();
     if (editingProduct?.id === id) closeEdit();
   };
 
@@ -296,16 +292,6 @@ export default function InventoryPage() {
     if (file) setter(URL.createObjectURL(file));
   };
 
-  const openProduct = (product: Product) => {
-    setSelectedProduct(product);
-    setSelectedSize(null);
-  };
-
-  const closeProduct = () => {
-    setSelectedProduct(null);
-    setSelectedSize(null);
-  };
-
   const openEdit = (product: Product) => {
     setEditingProduct(product);
     setEditName(product.name);
@@ -338,7 +324,6 @@ export default function InventoryPage() {
     };
 
     setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
-    if (selectedProduct?.id === updated.id) setSelectedProduct(updated);
     closeEdit();
   };
 
@@ -352,7 +337,7 @@ export default function InventoryPage() {
           </Link>
         </div>
         <p className="text-purple-600/80 text-sm mb-6">
-          Frontend only — changes reset on refresh.
+          Admin — manage your nail sets. Changes reset on refresh.
         </p>
 
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
@@ -414,11 +399,7 @@ export default function InventoryPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => openProduct(product)}
-                onKeyDown={(e) => e.key === "Enter" && openProduct(product)}
-                className="bg-purple-50 border border-purple-300 rounded-xl p-4 flex flex-col cursor-pointer hover:border-purple-500 hover:shadow-md transition"
+                className="bg-purple-50 border border-purple-300 rounded-xl p-4 flex flex-col"
               >
                 <ProductImage imageUrl={product.imageUrl} shape={product.shape} large />
                 <div className="mt-3 flex-1">
@@ -429,12 +410,11 @@ export default function InventoryPage() {
                     </span>
                   </div>
                   <p className="text-xs text-purple-500 mt-1">{product.shape}</p>
-                  <p className="text-sm text-purple-700/90 mt-2 leading-relaxed line-clamp-2">
+                  <p className="text-sm text-purple-700/90 mt-2 leading-relaxed">
                     {product.description}
                   </p>
-                  <p className="text-xs text-purple-600 mt-2 font-medium">Tap to pick a size</p>
                 </div>
-                <div className="mt-4 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                <div className="mt-4 flex items-center justify-between">
                   <span
                     className={`text-xs px-2 py-1 rounded-full border ${stockBadgeClass(product.stock)}`}
                   >
@@ -458,7 +438,7 @@ export default function InventoryPage() {
                     </button>
                   </div>
                 </div>
-                <div className="mt-3 flex gap-3" onClick={(e) => e.stopPropagation()}>
+                <div className="mt-3 flex gap-3">
                   <button
                     onClick={() => openEdit(product)}
                     className="text-purple-700 hover:text-purple-900 text-xs font-semibold"
@@ -477,85 +457,6 @@ export default function InventoryPage() {
           </div>
         )}
       </div>
-
-      {selectedProduct && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black/60 p-4 z-50"
-          onClick={closeProduct}
-        >
-          <div
-            className="bg-purple-50 border border-purple-300 rounded-xl p-6 max-w-sm w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ProductImage imageUrl={selectedProduct.imageUrl} shape={selectedProduct.shape} large />
-            <div className="mt-4">
-              <div className="flex justify-between items-start gap-2">
-                <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
-                <span className="text-xl font-bold text-purple-800">
-                  ${selectedProduct.price.toFixed(2)}
-                </span>
-              </div>
-              <p className="text-sm text-purple-500 mt-1">{selectedProduct.shape}</p>
-              <p className="text-sm text-purple-700/90 mt-2">{selectedProduct.description}</p>
-            </div>
-
-            <p className="text-sm font-semibold mt-5 mb-2">Pick your size:</p>
-            <div className="flex flex-wrap gap-2">
-              {SIZES.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  disabled={selectedProduct.stock === 0}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition ${
-                    selectedSize === size
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-purple-100 text-purple-900 border-purple-400 hover:bg-purple-200"
-                  } disabled:opacity-40 disabled:cursor-not-allowed`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-
-            {selectedProduct.stock === 0 ? (
-              <p className="text-sm text-red-600 mt-4">This set is sold out.</p>
-            ) : selectedSize ? (
-              <p className="text-sm text-purple-700 mt-4">
-                Selected: <span className="font-semibold">{selectedProduct.name}</span> — Size{" "}
-                <span className="font-semibold">{selectedSize}</span>
-              </p>
-            ) : (
-              <p className="text-sm text-purple-500 mt-4">Choose a size to continue.</p>
-            )}
-
-            <div className="flex gap-2 mt-5">
-              <button
-                onClick={() => {
-                  closeProduct();
-                  openEdit(selectedProduct);
-                }}
-                className="flex-1 p-2 rounded-lg border border-purple-400 text-purple-700 hover:bg-purple-100 text-sm font-semibold"
-              >
-                Edit set
-              </button>
-              <button
-                onClick={closeProduct}
-                className="flex-1 p-2 rounded-lg border border-purple-400 text-purple-700 hover:bg-purple-100"
-              >
-                Close
-              </button>
-              {selectedSize && selectedProduct.stock > 0 && (
-                <button
-                  onClick={closeProduct}
-                  className={`flex-1 p-2 rounded-lg font-semibold ${PRIMARY_BUTTON}`}
-                >
-                  Confirm
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {editingProduct && (
         <div
