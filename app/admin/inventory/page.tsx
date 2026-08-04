@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type Product = {
   id: string;
@@ -105,6 +105,41 @@ function ProductImage({ imageUrl, shape, large }: { imageUrl: string; shape: str
   );
 }
 
+function ClickablePhotoUpload({
+  imageUrl,
+  shape,
+  onImageUpload,
+}: {
+  imageUrl: string;
+  shape: string;
+  onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div>
+      <p className="text-xs text-purple-600 mb-2 font-medium">Click photo to change</p>
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        className="relative w-full group rounded-lg overflow-hidden border-2 border-dashed border-purple-400 hover:border-purple-600 transition"
+      >
+        <ProductImage key={imageUrl} imageUrl={imageUrl} shape={shape} large />
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+          <span className="text-white text-sm font-semibold">Change photo</span>
+        </div>
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={onImageUpload}
+        className="hidden"
+      />
+    </div>
+  );
+}
+
 type ProductFormProps = {
   name: string;
   description: string;
@@ -138,6 +173,7 @@ function ProductFormFields({
 }: ProductFormProps) {
   return (
     <>
+      <ClickablePhotoUpload imageUrl={imageUrl} shape={shape} onImageUpload={onImageUpload} />
       <input
         value={name}
         onChange={(e) => onNameChange(e.target.value)}
@@ -163,21 +199,9 @@ function ProductFormFields({
       <input
         value={imageUrl}
         onChange={(e) => onImageUrlChange(e.target.value)}
-        placeholder="Image URL (e.g. /products/my-set.jpg)"
+        placeholder="Or paste image URL (e.g. /products/my-set.jpg)"
         className={`p-2 rounded-lg ${INPUT_STYLE}`}
       />
-      <input
-        type="file"
-        accept="image/*"
-        onChange={onImageUpload}
-        className={`p-2 rounded-lg ${INPUT_STYLE}`}
-      />
-      {imageUrl && (
-        <div className="flex items-center gap-3">
-          <ProductImage imageUrl={imageUrl} shape={shape} />
-          <span className="text-xs text-purple-600">Image preview</span>
-        </div>
-      )}
       <div className="flex gap-3">
         <input
           type="number"
