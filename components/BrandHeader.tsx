@@ -5,24 +5,33 @@ import { BRAND_NAME } from "@/lib/theme";
 type BrandHeaderProps = {
   cartCount?: number;
   showCart?: boolean;
+  align?: "center" | "left";
 };
 
-export default function BrandHeader({ cartCount = 0, showCart = false }: BrandHeaderProps) {
+export default function BrandHeader({
+  cartCount = 0,
+  showCart = false,
+  align = "center",
+}: BrandHeaderProps) {
+  const isLeft = align === "left";
+
   return (
-    <header className="relative w-screen max-w-[100vw] left-1/2 -translate-x-1/2 mb-8 bg-purple-50/90 border-y border-purple-300 py-3 px-4 shadow-sm">
+    <header className="relative w-screen max-w-[100vw] left-1/2 -translate-x-1/2 mb-8 bg-purple-50/90 border-y border-purple-300 py-4 px-6 sm:px-10 shadow-sm">
       <Link
         href="/"
-        className="flex items-center justify-center gap-4 max-w-5xl mx-auto pr-12 sm:pr-14"
+        className={`flex items-center gap-5 sm:gap-6 w-full max-w-5xl ${
+          isLeft ? "mr-auto justify-start" : "mx-auto justify-center"
+        } ${showCart ? "pr-14 sm:pr-16" : ""}`}
       >
         <Image
           src="/logo.png"
           alt=""
           width={80}
           height={80}
-          className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover shrink-0"
+          className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-contain shrink-0"
           priority
         />
-        <span className="font-[family-name:var(--font-brand)] text-2xl sm:text-4xl font-bold text-purple-800 tracking-wide">
+        <span className="text-2xl sm:text-4xl font-bold text-purple-800 tracking-wide px-2 sm:px-3">
           {BRAND_NAME}
         </span>
       </Link>
@@ -30,7 +39,7 @@ export default function BrandHeader({ cartCount = 0, showCart = false }: BrandHe
         <Link
           href="/cart"
           aria-label={`Cart with ${cartCount} items`}
-          className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 flex items-center justify-center w-11 h-10 bg-purple-100 border-2 border-purple-400 rounded-xl hover:bg-purple-200 transition shadow-sm"
+          className="absolute top-1/2 -translate-y-1/2 right-6 sm:right-10 flex items-center justify-center w-11 h-10 bg-purple-100 border-2 border-purple-400 rounded-xl hover:bg-purple-200 transition shadow-sm"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

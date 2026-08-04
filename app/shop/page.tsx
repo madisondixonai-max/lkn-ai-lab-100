@@ -14,7 +14,6 @@ import {
 } from "@/lib/products";
 import {
   BACKGROUND,
-  BRAND_TAGLINE,
   CARD_STYLE,
   INPUT_STYLE,
   PRIMARY_BUTTON,
@@ -66,7 +65,6 @@ export default function ShopPage() {
       <div className="max-w-5xl mx-auto">
         <BrandHeader cartCount={cartCount} showCart />
 
-        <p className="text-purple-600/80 text-sm mb-2">{BRAND_TAGLINE}</p>
         <h1 className="text-3xl font-bold mb-6">Shop</h1>
 
         {addedMessage && (

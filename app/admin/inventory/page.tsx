@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import BrandHeader from "@/components/BrandHeader";
 import ProductImage from "@/components/ProductImage";
 import {
   MOCK_PRODUCTS,
@@ -236,7 +237,8 @@ export default function InventoryPage() {
   };
 
   return (
-    <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
+    <main className={`min-h-screen ${BACKGROUND} pb-10 px-6`}>
+      <BrandHeader align="left" />
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-3xl font-bold">Inventory</h1>
