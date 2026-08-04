@@ -9,16 +9,17 @@ type Product = {
   shape: string;
   price: number;
   stock: number;
+  imageUrl: string;
 };
 
-const SHAPES = ["Almond", "Coffin", "Stiletto", "Square", "Round", "Ballerina"];
+const SHAPES = ["Almond", "Square", "Coffin"];
 
 const MOCK_PRODUCTS: Product[] = [
-  { id: "1", name: "Classic Almond", shape: "Almond", price: 25, stock: 12 },
-  { id: "2", name: "Coffin Glitter", shape: "Coffin", price: 30, stock: 3 },
-  { id: "3", name: "Stiletto Ombre", shape: "Stiletto", price: 32, stock: 0 },
-  { id: "4", name: "Square French", shape: "Square", price: 22, stock: 8 },
-  { id: "5", name: "Round Pastel", shape: "Round", price: 20, stock: 5 },
+  { id: "1", name: "Classic Almond", shape: "Almond", price: 25, stock: 12, imageUrl: "" },
+  { id: "2", name: "Coffin Glitter", shape: "Coffin", price: 30, stock: 3, imageUrl: "" },
+  { id: "3", name: "Square French", shape: "Square", price: 22, stock: 8, imageUrl: "" },
+  { id: "4", name: "Almond Ombre", shape: "Almond", price: 28, stock: 0, imageUrl: "" },
+  { id: "5", name: "Coffin Chrome", shape: "Coffin", price: 32, stock: 5, imageUrl: "" },
 ];
 
 const BACKGROUND = "bg-purple-200 text-purple-700";
@@ -37,13 +38,42 @@ function stockBadgeClass(stock: number) {
   return "bg-green-100 text-green-800 border-green-300";
 }
 
+function ProductThumbnail({ imageUrl, shape }: { imageUrl: string; shape: string }) {
+  const [failed, setFailed] = useState(false);
+  const showPlaceholder = !imageUrl || failed;
+
+  if (showPlaceholder) {
+    return (
+      <div className="w-12 h-12 rounded-lg bg-purple-200 border border-purple-300 flex items-center justify-center text-xs font-semibold text-purple-600">
+        {shape.slice(0, 1)}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={shape}
+      className="w-12 h-12 rounded-lg object-cover border border-purple-300"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
+  const [shapeFilter, setShapeFilter] = useState("All");
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [newShape, setNewShape] = useState(SHAPES[0]);
   const [newPrice, setNewPrice] = useState("");
   const [newStock, setNewStock] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
+
+  const filteredProducts =
+    shapeFilter === "All"
+      ? products
+      : products.filter((p) => p.shape === shapeFilter);
 
   const updateStock = (id: string, delta: number) => {
     setProducts((prev) =>
@@ -71,18 +101,25 @@ export default function InventoryPage() {
         shape: newShape,
         price,
         stock,
+        imageUrl: newImageUrl.trim(),
       },
     ]);
     setNewName("");
     setNewShape(SHAPES[0]);
     setNewPrice("");
     setNewStock("");
+    setNewImageUrl("");
     setShowAddForm(false);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setNewImageUrl(URL.createObjectURL(file));
   };
 
   return (
     <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-3xl font-bold">Inventory</h1>
           <Link href="/" className="text-sm text-purple-600 hover:underline">
@@ -93,7 +130,20 @@ export default function InventoryPage() {
           Frontend only — changes reset on refresh.
         </p>
 
-        <div className="flex justify-end mb-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+          <label className="flex items-center gap-2 text-sm">
+            <span className="font-semibold">Filter by shape:</span>
+            <select
+              value={shapeFilter}
+              onChange={(e) => setShapeFilter(e.target.value)}
+              className={`p-2 rounded-lg ${INPUT_STYLE}`}
+            >
+              <option>All</option>
+              {SHAPES.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </label>
           <button
             onClick={() => setShowAddForm((v) => !v)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold ${PRIMARY_BUTTON}`}
@@ -122,6 +172,18 @@ export default function InventoryPage() {
                 <option key={s}>{s}</option>
               ))}
             </select>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className={`p-2 rounded-lg ${INPUT_STYLE}`}
+            />
+            {newImageUrl && (
+              <div className="flex items-center gap-3">
+                <ProductThumbnail imageUrl={newImageUrl} shape={newShape} />
+                <span className="text-xs text-purple-600">Image preview</span>
+              </div>
+            )}
             <div className="flex gap-3">
               <input
                 type="number"
@@ -154,6 +216,7 @@ export default function InventoryPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-purple-200 text-left">
+                <th className="p-4 font-semibold">Image</th>
                 <th className="p-4 font-semibold">Product</th>
                 <th className="p-4 font-semibold hidden sm:table-cell">Shape</th>
                 <th className="p-4 font-semibold">Price</th>
@@ -163,15 +226,20 @@ export default function InventoryPage() {
               </tr>
             </thead>
             <tbody>
-              {products.length === 0 ? (
+              {filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-purple-500">
-                    No products yet. Add one above.
+                  <td colSpan={7} className="p-8 text-center text-purple-500">
+                    {products.length === 0
+                      ? "No products yet. Add one above."
+                      : "No products match this filter."}
                   </td>
                 </tr>
               ) : (
-                products.map((product) => (
+                filteredProducts.map((product) => (
                   <tr key={product.id} className="border-b border-purple-100 last:border-none">
+                    <td className="p-4">
+                      <ProductThumbnail imageUrl={product.imageUrl} shape={product.shape} />
+                    </td>
                     <td className="p-4 font-medium">{product.name}</td>
                     <td className="p-4 hidden sm:table-cell">{product.shape}</td>
                     <td className="p-4">${product.price.toFixed(2)}</td>
