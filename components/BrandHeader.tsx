@@ -9,17 +9,19 @@ type BrandHeaderProps = {
 
 export default function BrandHeader({ cartCount = 0, showCart = false }: BrandHeaderProps) {
   return (
-    <header className="relative flex justify-center items-center mb-8 min-h-[88px]">
-      <Link href="/" className="flex flex-col items-center gap-2">
+    <header className="relative flex justify-center items-center mb-8 min-h-[140px]">
+      <Link href="/" className="flex flex-col items-center gap-3">
         <Image
           src="/logo.png"
           alt={BRAND_NAME}
-          width={72}
-          height={72}
+          width={100}
+          height={100}
           className="rounded-xl"
           priority
         />
-        <span className="text-2xl font-bold text-purple-800">{BRAND_NAME}</span>
+        <span className="font-[family-name:var(--font-brand)] text-3xl font-bold text-purple-800 tracking-wide">
+          {BRAND_NAME}
+        </span>
       </Link>
       {showCart && (
         <Link
