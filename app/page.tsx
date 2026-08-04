@@ -1,6 +1,6 @@
 import Link from "next/link";
 import BrandHeader from "@/components/BrandHeader";
-import { BACKGROUND, BRAND_NAME, BRAND_TAGLINE, PRIMARY_BUTTON } from "@/lib/theme";
+import { BACKGROUND, BRAND_TAGLINE, PRIMARY_BUTTON } from "@/lib/theme";
 
 export default function Home() {
   return (
@@ -8,7 +8,6 @@ export default function Home() {
       <div className="max-w-xl mx-auto text-center">
         <BrandHeader />
 
-        <h1 className="text-4xl font-bold mt-8 mb-3">{BRAND_NAME}</h1>
         <p className="text-lg text-purple-600 mb-2">{BRAND_TAGLINE}</p>
         <p className="text-sm text-purple-700/90 mb-8">
           Press-on nails with salon-quality styles — without salon prices. Pick your shape, choose your size, and get cute nails at home.
