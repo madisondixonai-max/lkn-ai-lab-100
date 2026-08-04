@@ -6,6 +6,7 @@ export type Product = {
   price: number;
   stock: number;
   imageUrl: string;
+  themes: string[];
 };
 
 export const SHAPES = ["Almond", "Square", "Coffin"];
@@ -20,6 +21,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 25,
     stock: 12,
     imageUrl: "/products/classic-almond.jpg",
+    themes: ["summer", "minimal"],
   },
   {
     id: "2",
@@ -29,6 +31,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 30,
     stock: 3,
     imageUrl: "/products/coffin-glitter.jpg",
+    themes: ["glam", "summer"],
   },
   {
     id: "3",
@@ -38,6 +41,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 22,
     stock: 8,
     imageUrl: "/products/square-french.jpg",
+    themes: ["minimal", "beach"],
   },
   {
     id: "4",
@@ -47,6 +51,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 28,
     stock: 0,
     imageUrl: "/products/almond-ombre.jpg",
+    themes: ["summer", "glam"],
   },
   {
     id: "5",
@@ -56,6 +61,7 @@ export const MOCK_PRODUCTS: Product[] = [
     price: 32,
     stock: 5,
     imageUrl: "/products/coffin-chrome.jpg",
+    themes: ["glam"],
   },
 ];
 

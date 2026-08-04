@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import BrandHeader from "@/components/BrandHeader";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import SiteHeader from "@/components/SiteHeader";
 import ProductImage from "@/components/ProductImage";
 import { addCartItem, getCart } from "@/lib/cart";
 import {
@@ -12,6 +13,7 @@ import {
   stockLabel,
   type Product,
 } from "@/lib/products";
+import { NAIL_THEMES } from "@/lib/themes";
 import {
   BACKGROUND,
   CARD_STYLE,
@@ -19,7 +21,9 @@ import {
   PRIMARY_BUTTON,
 } from "@/lib/theme";
 
-export default function ShopPage() {
+function ShopContent() {
+  const searchParams = useSearchParams();
+  const themeParam = searchParams.get("theme");
   const [shapeFilter, setShapeFilter] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -30,10 +34,13 @@ export default function ShopPage() {
     setCartCount(getCart().length);
   }, []);
 
-  const filteredProducts =
-    shapeFilter === "All"
-      ? MOCK_PRODUCTS
-      : MOCK_PRODUCTS.filter((p) => p.shape === shapeFilter);
+  const activeTheme = NAIL_THEMES.find((t) => t.id === themeParam);
+
+  const filteredProducts = MOCK_PRODUCTS.filter((p) => {
+    const shapeMatch = shapeFilter === "All" || p.shape === shapeFilter;
+    const themeMatch = !themeParam || p.themes.includes(themeParam);
+    return shapeMatch && themeMatch;
+  });
 
   const openProduct = (product: Product) => {
     setSelectedProduct(product);
@@ -63,8 +70,13 @@ export default function ShopPage() {
   return (
     <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
       <div className="max-w-5xl mx-auto">
-        <BrandHeader cartCount={cartCount} showCart />
+        <SiteHeader cartCount={cartCount} showCart />
 
+        {activeTheme && (
+          <p className="text-purple-700 mb-2">
+            {activeTheme.emoji} {activeTheme.name} theme
+          </p>
+        )}
         <h1 className="text-3xl font-bold mb-6">Shop</h1>
 
         {addedMessage && (
@@ -191,5 +203,21 @@ export default function ShopPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
+          <div className="max-w-5xl mx-auto">
+            <p className="text-purple-700">Loading shop…</p>
+          </div>
+        </main>
+      }
+    >
+      <ShopContent />
+    </Suspense>
   );
 }

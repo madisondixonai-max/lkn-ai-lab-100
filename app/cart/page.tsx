@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import BrandHeader from "@/components/BrandHeader";
+import SiteHeader from "@/components/SiteHeader";
 import {
   cartSubtotal,
   clearCart,
@@ -97,7 +97,7 @@ export default function CartPage() {
     return (
       <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
         <div className="max-w-lg mx-auto text-center">
-          <BrandHeader cartCount={0} showCart />
+          <SiteHeader cartCount={0} showCart />
           <div className={`${CARD_STYLE} p-8 mt-8`}>
             <h1 className="text-2xl font-bold mb-3">Order placed!</h1>
             <p className="text-purple-700 mb-6">
@@ -116,7 +116,7 @@ export default function CartPage() {
     return (
       <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
         <div className="max-w-lg mx-auto">
-          <BrandHeader cartCount={0} showCart />
+          <SiteHeader cartCount={0} showCart />
           <div className={`${CARD_STYLE} p-8 text-center mt-8`}>
             <p className="text-purple-600 mb-4">Your cart is empty.</p>
             <Link href="/shop" className={`inline-block px-6 py-2 rounded-lg font-semibold ${PRIMARY_BUTTON}`}>
@@ -131,7 +131,7 @@ export default function CartPage() {
   return (
     <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
       <div className="max-w-lg mx-auto">
-        <BrandHeader cartCount={cart.length} showCart />
+        <SiteHeader cartCount={cart.length} showCart />
 
         <h1 className="text-3xl font-bold mb-2">Cart</h1>
         <p className="text-sm text-purple-600 mb-6">Step {step} of 6</p>

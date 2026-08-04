@@ -1,14 +1,14 @@
 import Link from "next/link";
-import BrandHeader from "@/components/BrandHeader";
+import SiteHeader from "@/components/SiteHeader";
+import ThemeCards from "@/components/ThemeCards";
 import { BACKGROUND, PRIMARY_BUTTON } from "@/lib/theme";
 
 export default function Home() {
   return (
-    <main className={`min-h-screen ${BACKGROUND} py-10 px-6`}>
+    <main className={`min-h-screen ${BACKGROUND} pb-10 px-6`}>
+      <SiteHeader />
       <div className="max-w-xl mx-auto text-center">
-        <BrandHeader />
-
-        <p className="text-sm text-purple-700/90 mb-8 mt-6">
+        <p className="text-sm text-purple-700/90 mb-6 mt-2">
           Press-on nails with salon-quality styles — without salon prices. Pick your shape, choose your size, and get cute nails at home.
         </p>
 
@@ -18,6 +18,8 @@ export default function Home() {
         >
           Shop now
         </Link>
+
+        <ThemeCards />
       </div>
     </main>
   );
