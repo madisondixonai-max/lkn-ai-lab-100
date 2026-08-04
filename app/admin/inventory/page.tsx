@@ -2,107 +2,15 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-
-type Product = {
-  id: string;
-  name: string;
-  shape: string;
-  description: string;
-  price: number;
-  stock: number;
-  imageUrl: string;
-};
-
-const SHAPES = ["Almond", "Square", "Coffin"];
-
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: "1",
-    name: "Classic Almond",
-    shape: "Almond",
-    description: "Soft nude pink with a glossy finish. Perfect for everyday wear.",
-    price: 25,
-    stock: 12,
-    imageUrl: "/products/classic-almond.jpg",
-  },
-  {
-    id: "2",
-    name: "Coffin Glitter",
-    shape: "Coffin",
-    description: "Silver glitter fade on a coffin shape. Great for nights out.",
-    price: 30,
-    stock: 3,
-    imageUrl: "/products/coffin-glitter.jpg",
-  },
-  {
-    id: "3",
-    name: "Square French",
-    shape: "Square",
-    description: "Clean white tips on a square shape. Timeless and classy.",
-    price: 22,
-    stock: 8,
-    imageUrl: "/products/square-french.jpg",
-  },
-  {
-    id: "4",
-    name: "Almond Ombre",
-    shape: "Almond",
-    description: "Purple-to-pink ombre on almond nails. Bold but still cute.",
-    price: 28,
-    stock: 0,
-    imageUrl: "/products/almond-ombre.jpg",
-  },
-  {
-    id: "5",
-    name: "Coffin Chrome",
-    shape: "Coffin",
-    description: "Mirror chrome finish with a coffin shape. Stands out in photos.",
-    price: 32,
-    stock: 5,
-    imageUrl: "/products/coffin-chrome.jpg",
-  },
-];
-
-const BACKGROUND = "bg-purple-200 text-purple-700";
-const INPUT_STYLE = "bg-purple-100 border border-purple-400 text-purple-900";
-const PRIMARY_BUTTON = "bg-purple-600 text-white hover:bg-purple-700 transition";
-
-function stockLabel(stock: number) {
-  if (stock === 0) return "Sold out";
-  if (stock <= 5) return "Low";
-  return "In stock";
-}
-
-function stockBadgeClass(stock: number) {
-  if (stock === 0) return "bg-red-100 text-red-700 border-red-300";
-  if (stock <= 5) return "bg-amber-100 text-amber-800 border-amber-300";
-  return "bg-green-100 text-green-800 border-green-300";
-}
-
-function ProductImage({ imageUrl, shape, large }: { imageUrl: string; shape: string; large?: boolean }) {
-  const [failed, setFailed] = useState(false);
-  const showPlaceholder = !imageUrl || failed;
-  const sizeClass = large ? "w-full h-40" : "w-12 h-12";
-
-  if (showPlaceholder) {
-    return (
-      <div
-        className={`${sizeClass} rounded-lg bg-purple-200 border border-purple-300 flex items-center justify-center text-2xl font-semibold text-purple-600`}
-      >
-        {shape.slice(0, 1)}
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={imageUrl}
-      alt={shape}
-      className={`${sizeClass} rounded-lg object-cover border border-purple-300`}
-      onError={() => setFailed(true)}
-    />
-  );
-}
+import ProductImage from "@/components/ProductImage";
+import {
+  MOCK_PRODUCTS,
+  SHAPES,
+  stockBadgeClass,
+  stockLabel,
+  type Product,
+} from "@/lib/products";
+import { BACKGROUND, INPUT_STYLE, PRIMARY_BUTTON, CARD_STYLE } from "@/lib/theme";
 
 function ClickablePhotoUpload({
   imageUrl,
@@ -399,7 +307,7 @@ export default function InventoryPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="bg-purple-50 border border-purple-300 rounded-xl p-4 flex flex-col"
+                className={`${CARD_STYLE} p-4 flex flex-col`}
               >
                 <ProductImage imageUrl={product.imageUrl} shape={product.shape} large />
                 <div className="mt-3 flex-1">

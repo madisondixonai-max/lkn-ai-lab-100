@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LKN AI Lab — Level 100",
-  description: "Build and deploy your first AI-powered app.",
+  title: "NailedByMadison — Press-On Nails",
+  description: "Salon quality press-on nails by Madison. Shop almond, square, and coffin sets.",
 };
 
 export default function RootLayout({
